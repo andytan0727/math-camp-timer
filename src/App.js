@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import CircularProgressbar from "react-circular-progressbar";
-import { Button } from "semantic-ui-react";
+import { Button, Icon } from "semantic-ui-react";
 // import { delay } from "./utils/helpers";
 
 import sound from "./assets/sound.wav";
@@ -17,9 +17,10 @@ const App = props => {
     min: 0
   });
   const [totalSec, setTotalSec] = useState(0);
+  const [start, setStart] = useState(false);
   const [pause, setPause] = useState(false);
+  const [stop, setStop] = useState(true);
   const [loopTimer, setLoopTimer] = useState(true);
-  const [playSound, setPlaySound] = useState(false);
   const timeInput = useRef(null);
 
   // -------------- utility functions --------------
@@ -38,23 +39,6 @@ const App = props => {
     setTotalSec(min * 60 + sec);
   };
 
-  // const startTimer = async e => {
-  //   curSec = curSec ? curSec : 1;
-  //   console.log(`curSec: ${curSec}`);
-  //   setPercentage(0);
-
-  // for (let curSec = 1; curSec <= totalSec; curSec++) {
-  //   // await delay(200);
-  //   // setPercentage((curSec / totalSec) * 100);
-  //   timers.push(
-  //     setTimeout(() => {
-  //       setPercentage((curSec / totalSec) * 100);
-  //     }, curSec * 200)
-  //   );
-  //   console.log(`curSec: ${curSec}`);
-  // }
-  // };
-
   // -------------- Event handler --------------
   const handleClick = e => {
     console.log("clicked");
@@ -69,8 +53,18 @@ const App = props => {
   };
 
   const handleStartTimer = e => {
-    InitializeTimer(timeInput.current.value);
-    setPercentage(0);
+    const value = timeInput.current.value;
+    // Clear possible existing timeout
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    if (value) {
+      InitializeTimer(value);
+      setStart(prevStarted => !prevStarted);
+      setStop(false);
+      setPercentage(curSec);
+    }
   };
 
   const handlePauseTimer = e => {
@@ -82,7 +76,7 @@ const App = props => {
   const handleResumeTimer = e => {
     console.log("Resume");
     setPause(prevPause => !prevPause);
-    setPercentage(0);
+    setPercentage((curSec / totalSec) * 100 + 0.01);
   };
 
   const handleStopTimer = e => {
@@ -99,6 +93,11 @@ const App = props => {
 
     // Clear timer
     clearTimeout(timer);
+
+    // Set all buttons to their original states
+    setStart(false);
+    setPause(false);
+    setStop(true);
   };
 
   useEffect(() => {
@@ -169,28 +168,53 @@ const App = props => {
         </div>
         <input
           ref={timeInput}
+          type="number"
           onChange={handleOnChange}
           className="timeInput"
         />
 
         <Button.Group size="massive">
-          <Button
-            content="Loop"
-            color={loopTimer ? "green" : "grey"}
-            onClick={handleLoopTimer}
-          />
-          <Button.Or />
-          <Button content="Start" onClick={handleStartTimer} />
-          <Button.Or />
-          {pause ? (
-            <Button content="Resume" onClick={handleResumeTimer} />
+          <Button animated toggle active={loopTimer} onClick={handleLoopTimer}>
+            <Button.Content hidden>Loop</Button.Content>
+            <Button.Content visible>
+              <Icon name="repeat" />
+            </Button.Content>
+          </Button>
+
+          {!start ? (
+            <Button animated="vertical" onClick={handleStartTimer}>
+              <Button.Content hidden>Start</Button.Content>
+              <Button.Content visible>
+                <Icon name="play" />
+              </Button.Content>
+            </Button>
+          ) : pause ? (
+            <Button animated="vertical" onClick={handleResumeTimer}>
+              <Button.Content hidden>Resume</Button.Content>
+              <Button.Content visible>
+                <Icon name="play" />
+              </Button.Content>
+            </Button>
           ) : (
-            <Button content="Pause" onClick={handlePauseTimer} />
+            <Button animated="vertical" onClick={handlePauseTimer}>
+              <Button.Content hidden>Pause</Button.Content>
+              <Button.Content visible>
+                <Icon name="pause" />
+              </Button.Content>
+            </Button>
           )}
-          <Button.Or />
-          <Button content="Stop" color="red" onClick={handleStopTimer} />
 
-
+          <Button
+            disabled={stop}
+            animated="fade"
+            color="red"
+            onClick={handleStopTimer}
+          >
+            <Button.Content hidden>Stop</Button.Content>
+            <Button.Content visible>
+              <Icon name="stop" />
+            </Button.Content>
+          </Button>
         </Button.Group>
       </div>
     </div>
