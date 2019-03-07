@@ -1,15 +1,58 @@
+@import url("https://fonts.googleapis.com/css?family=Fira+Sans");
+@import url("https://fonts.googleapis.com/css?family=Baloo+Thambi");
+
 .App {
+  display: flex;
+  flex-direction: row;
+}
+
+.mathCampText {
+  width: 500px;
+
+  /* vertical align */
+  position: absolute;
+  top: 50%;
+  transform: translate(10%, -50%);
+}
+
+.mathCampText ul {
+  list-style-type: none;
+  text-align: center;
+}
+
+.mathCampText ul li {
+  /* font-family: 'Fira Sans', sans-serif; */
+  font-family: "Baloo Thambi", cursive;
+  /* font-weight: bold; */
+  font-size: 75px;
+  line-height: 2em;
+  /* text-transform: uppercase; */
+  animation: glow 3s ease-in-out infinite;
+}
+
+.mathCampText ul li:nth-child(2) {
+  animation-delay: 1s;
+}
+
+.mathCampText ul li:nth-child(3) {
+  animation-delay: 2s;
+}
+
+.timer {
   display: flex;
   justify-content: center;
   align-content: center;
-  min-width: 100%;
-  height: inherit;
+  /* min-width: 100%; */
+  /* height: inherit; */
+  position: absolute;
+  /* left: 20%; */
+  right: 20%;
 }
 
 .circularProgress {
-  width: 400px;
+  width: 390px;
   position: absolute;
-  top: 10%;
+  top: 7%;
 }
 
 .timeInput {
@@ -27,7 +70,7 @@
   /* remove borders */
   border: 0;
   outline: 0;
-  border-bottom: 12px solid cyan;
+  /* border-bottom: 12px solid cyan; */
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -38,8 +81,25 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .buttonGroup {
   display: flex;
+  box-sizing: border-box;
+  padding: 25px 25px 25px 25px;
+  background-color: white;
   flex-direction: column;
   align-content: center;
   position: relative;
-  margin-top: 75vh;
+  margin-top: 77vh;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    color: #fff;
+    text-shadow: 0 0 10px #0652dd, 0 0 50px #0652dd, 0 0 100px #0652dd;
+  }
+
+  10%,
+  90% {
+    color: #111;
+    text-shadow: none;
+  }
 }
