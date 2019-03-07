@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import CircularProgressbar from "react-circular-progressbar";
 import { Button } from "semantic-ui-react";
 // import { delay } from "./utils/helpers";
+
+import sound from "./assets/sound.wav";
 import "./App.css";
 
 let timer;
 let curSec;
+const audio = new Audio(sound);
 
 const App = props => {
   const [percentage, setPercentage] = useState(0);
@@ -16,6 +19,7 @@ const App = props => {
   const [totalSec, setTotalSec] = useState(0);
   const [pause, setPause] = useState(false);
   const [loopTimer, setLoopTimer] = useState(true);
+  const [playSound, setPlaySound] = useState(false);
   const timeInput = useRef(null);
 
   // -------------- utility functions --------------
@@ -139,6 +143,7 @@ const App = props => {
 
   useEffect(() => {
     if (Math.floor(percentage) >= 100) {
+      audio.play();
       clearTimeout(timer);
       if (loopTimer) {
         InitializeTimer(timeInput.current.value);
@@ -146,14 +151,6 @@ const App = props => {
       }
     }
   }, [time]);
-
-  // componentDidUpdate (percentage)
-  // useEffect(() => {
-  //   let timer = setTimeout(() => {
-  //     setPercentage(prevState => prevState + 1);
-  //   }, 250);
-  //   if (percentage === 100) clearTimeout(timer);
-  // }, [percentage]);
 
   return (
     <div className="App">
@@ -191,7 +188,9 @@ const App = props => {
             <Button content="Pause" onClick={handlePauseTimer} />
           )}
           <Button.Or />
-          <Button content="Stop" onClick={handleStopTimer} />
+          <Button content="Stop" color="red" onClick={handleStopTimer} />
+
+
         </Button.Group>
       </div>
     </div>
