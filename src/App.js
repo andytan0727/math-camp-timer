@@ -40,6 +40,23 @@ const App = props => {
     setTotalSec(min * 60 + sec);
   };
 
+  const resetTimer = () => {
+    setTime({
+      sec: 0,
+      min: 0
+    });
+    curSec = 0;
+    setPercentage(0);
+
+    // Clear input
+    timeInput.current.value = "";
+
+    // Set all buttons to their original states
+    setStart(false);
+    setPause(false);
+    setStop(true);
+  };
+
   // -------------- Event handler --------------
   const handleClick = e => {
     console.log("clicked");
@@ -88,30 +105,17 @@ const App = props => {
   };
 
   const handleStopTimer = e => {
-    // Set time, curSec, and percent run to 0
-    setTime({
-      sec: 0,
-      min: 0
-    });
-    curSec = 0;
-    setPercentage(0);
-
-    // Clear input
-    timeInput.current.value = "";
-
     // Clear timer
     clearTimeout(timer);
 
-    // Set all buttons to their original states
-    setStart(false);
-    setPause(false);
-    setStop(true);
+    // reset timer
+    resetTimer();
   };
 
   // Percentage change
   // Main timer logic
   useEffect(() => {
-    console.log(`min: ${time.min}, sec: ${time.sec}`);
+    // console.log(`min: ${time.min}, sec: ${time.sec}`);
 
     timer = setTimeout(() => {
       setPercentage((curSec / totalSec) * 100);
@@ -147,6 +151,8 @@ const App = props => {
       if (loopTimer) {
         InitializeTimer(timeInput.current.value);
         setPercentage(0);
+      } else {
+        resetTimer();
       }
     }
   }, [time]);
@@ -199,7 +205,21 @@ const App = props => {
                 <Icon name="play" />
               </Button.Content>
             </Button>
-          ) : pause ? (
+          ) : (
+            <Button
+              disabled={stop}
+              animated="fade"
+              color="red"
+              onClick={handleStopTimer}
+            >
+              <Button.Content hidden>Stop</Button.Content>
+              <Button.Content visible>
+                <Icon name="stop" />
+              </Button.Content>
+            </Button>
+          )}
+
+          {pause ? (
             <Button animated="vertical" onClick={handleResumeTimer}>
               <Button.Content hidden>Resume</Button.Content>
               <Button.Content visible>
@@ -214,18 +234,6 @@ const App = props => {
               </Button.Content>
             </Button>
           )}
-
-          <Button
-            disabled={stop}
-            animated="fade"
-            color="red"
-            onClick={handleStopTimer}
-          >
-            <Button.Content hidden>Stop</Button.Content>
-            <Button.Content visible>
-              <Icon name="stop" />
-            </Button.Content>
-          </Button>
         </Button.Group>
       </div>
     </div>
