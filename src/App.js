@@ -15,6 +15,7 @@ const App = props => {
   });
   const [totalSec, setTotalSec] = useState(0);
   const [pause, setPause] = useState(false);
+  const [loopTimer, setLoopTimer] = useState(true);
   const timeInput = useRef(null);
 
   // -------------- utility functions --------------
@@ -23,6 +24,7 @@ const App = props => {
       return;
     }
 
+    curSec = 1;
     const sec = value % 100;
     const min = ((value - sec) % 10000) / 100;
     setTime({
@@ -54,10 +56,15 @@ const App = props => {
     console.log("clicked");
   };
 
-  const handleStartTimer = e => {
-    curSec = 1;
+  const handleOnChange = e => {
+    InitializeTimer(e.target.value);
+  };
 
-    // Initialize timer
+  const handleLoopTimer = e => {
+    setLoopTimer(prevLoop => !prevLoop);
+  };
+
+  const handleStartTimer = e => {
     InitializeTimer(timeInput.current.value);
     setPercentage(0);
   };
@@ -131,7 +138,13 @@ const App = props => {
   }, [percentage]);
 
   useEffect(() => {
-    if (Math.floor(percentage) >= 100) clearTimeout(timer);
+    if (Math.floor(percentage) >= 100) {
+      clearTimeout(timer);
+      if (loopTimer) {
+        InitializeTimer(timeInput.current.value);
+        setPercentage(0);
+      }
+    }
   }, [time]);
 
   // componentDidUpdate (percentage)
@@ -157,10 +170,18 @@ const App = props => {
           <span>:</span>
           <span>{time.sec}</span>
         </div>
-        <input ref={timeInput} className="timeInput" />
+        <input
+          ref={timeInput}
+          onChange={handleOnChange}
+          className="timeInput"
+        />
 
         <Button.Group size="massive">
-          <Button content="Loop" color="green" />
+          <Button
+            content="Loop"
+            color={loopTimer ? "green" : "grey"}
+            onClick={handleLoopTimer}
+          />
           <Button.Or />
           <Button content="Start" onClick={handleStartTimer} />
           <Button.Or />
