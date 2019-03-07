@@ -7,6 +7,26 @@
 }
 
 .circularProgress {
+  width: 250px;
   position: absolute;
-  top: 25%;
+  top: 15%;
+}
+
+.timeInput {
+  position: relative;
+  margin: 0 auto;
+  margin-top: -25px;
+  margin-bottom: 25px;
+  direction: rtl;
+  width: 150px;
+  height: 50px;
+  font-size: 35px;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  position: absolute;
+  top: 65%;
 }
