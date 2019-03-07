@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CircularProgressbar from "react-circular-progressbar";
 import { Button } from "semantic-ui-react";
-import { delay } from "./utils/helpers";
+// import { delay } from "./utils/helpers";
 import "./App.css";
+
+let timer;
+let curSec;
 
 const App = props => {
   const [percentage, setPercentage] = useState(0);
@@ -12,32 +15,79 @@ const App = props => {
   });
   const [totalSec, setTotalSec] = useState(0);
   const [pause, setPause] = useState(false);
+  const timeInput = useRef(null);
 
+  // -------------- utility functions --------------
+  const InitializeTimer = value => {
+    if (Number.isNaN(value)) {
+      return;
+    }
+
+    const sec = value % 100;
+    const min = ((value - sec) % 10000) / 100;
+    setTime({
+      sec,
+      min
+    });
+    setTotalSec(min * 60 + sec);
+  };
+
+  // const startTimer = async e => {
+  //   curSec = curSec ? curSec : 1;
+  //   console.log(`curSec: ${curSec}`);
+  //   setPercentage(0);
+
+  // for (let curSec = 1; curSec <= totalSec; curSec++) {
+  //   // await delay(200);
+  //   // setPercentage((curSec / totalSec) * 100);
+  //   timers.push(
+  //     setTimeout(() => {
+  //       setPercentage((curSec / totalSec) * 100);
+  //     }, curSec * 200)
+  //   );
+  //   console.log(`curSec: ${curSec}`);
+  // }
+  // };
+
+  // -------------- Event handler --------------
   const handleClick = e => {
     console.log("clicked");
   };
 
-  const handleOnChange = e => {
-    const value = Number(e.target.value);
+  const handleStartTimer = e => {
+    curSec = 1;
 
-    if (!Number.isNaN(value)) {
-      const sec = value % 100;
-      const min = ((value - sec) % 10000) / 100;
-      setTime({
-        sec,
-        min
-      });
-      setTotalSec(min * 60 + sec);
-    }
+    // Initialize timer
+    InitializeTimer(timeInput.current.value);
+    setPercentage(0);
   };
 
-  const startTimer = async e => {
-    e.preventDefault();
+  const handlePauseTimer = e => {
+    console.log("Paused!");
+    setPause(prevPause => !prevPause);
+    clearTimeout(timer);
+  };
 
-    for (let curSec = 1; curSec <= totalSec; curSec++) {
-      await delay(200);
-      setPercentage((curSec / totalSec) * 100);
-    }
+  const handleResumeTimer = e => {
+    console.log("Resume");
+    setPause(prevPause => !prevPause);
+    setPercentage(0);
+  };
+
+  const handleStopTimer = e => {
+    // Set time, curSec, and percent run to 0
+    setTime({
+      sec: 0,
+      min: 0
+    });
+    curSec = 0;
+    setPercentage(0);
+
+    // Clear input
+    timeInput.current.value = "";
+
+    // Clear timer
+    clearTimeout(timer);
   };
 
   useEffect(() => {
@@ -49,27 +99,40 @@ const App = props => {
     };
   }, []);
 
-  // time change
+  // Percentage change
+  // Main timer logic
   useEffect(() => {
     console.log(`min: ${time.min}, sec: ${time.sec}`);
-    console.log(totalSec);
-    if (time.sec > 0) {
-      setTime(prevTime => ({
-        min: prevTime.min,
-        sec: prevTime.sec - 1
-      }));
-    } else if (time.min === 0 && time.sec === 0) {
-      setTime({
-        min: 0,
-        sec: 0
+
+    timer = setTimeout(() => {
+      setPercentage((curSec / totalSec) * 100);
+
+      setTime(prevTime => {
+        if (prevTime.sec > 0) {
+          return {
+            min: prevTime.min,
+            sec: prevTime.sec - 1
+          };
+        } else if (prevTime.min === 0 && prevTime.sec === 0) {
+          return {
+            min: 0,
+            sec: 0
+          };
+        } else {
+          return {
+            min: prevTime.min - 1,
+            sec: 59
+          };
+        }
       });
-    } else {
-      setTime(prevTime => ({
-        min: prevTime.min - 1,
-        sec: 59
-      }));
-    }
+
+      curSec++;
+    }, 200);
   }, [percentage]);
+
+  useEffect(() => {
+    if (Math.floor(percentage) >= 100) clearTimeout(timer);
+  }, [time]);
 
   // componentDidUpdate (percentage)
   // useEffect(() => {
@@ -89,24 +152,25 @@ const App = props => {
         />
       </div>
       <div className="buttonGroup">
-        <input
-          className="timeInput"
-          // value={`${time.min}m ${time.sec}s`}
-          onChange={handleOnChange}
-        />
+        <div className="inputSpan">
+          <span>{time.min}</span>
+          <span>:</span>
+          <span>{time.sec}</span>
+        </div>
+        <input ref={timeInput} className="timeInput" />
+
         <Button.Group size="massive">
           <Button content="Loop" color="green" />
           <Button.Or />
-          <Button content="Start" onClick={startTimer} />
+          <Button content="Start" onClick={handleStartTimer} />
           <Button.Or />
-          <Button
-            content="Pause"
-            onClick={() => {
-              alert("Paused!");
-            }}
-          />
+          {pause ? (
+            <Button content="Resume" onClick={handleResumeTimer} />
+          ) : (
+            <Button content="Pause" onClick={handlePauseTimer} />
+          )}
           <Button.Or />
-          <Button content="Stop" />
+          <Button content="Stop" onClick={handleStopTimer} />
         </Button.Group>
       </div>
     </div>
