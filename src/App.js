@@ -11,16 +11,16 @@ let curSec;
 const audio = new Audio(sound);
 
 const App = props => {
-  const [percentage, setPercentage] = useState(0);
+  const [percentage, setPercentage] = useState(null);
   const [time, setTime] = useState({
     sec: 0,
     min: 0
   });
   const [totalSec, setTotalSec] = useState(0);
+  const [loopTimer, setLoopTimer] = useState(false);
   const [start, setStart] = useState(false);
   const [pause, setPause] = useState(false);
   const [stop, setStop] = useState(true);
-  const [loopTimer, setLoopTimer] = useState(true);
   const timeInput = useRef(null);
 
   // -------------- utility functions --------------
@@ -30,8 +30,9 @@ const App = props => {
     }
 
     curSec = 1;
-    const sec = value % 100;
-    const min = ((value - sec) % 10000) / 100;
+    const timeSet = value.slice(-4);
+    const sec = timeSet % 100;
+    const min = ((timeSet - sec) % 10000) / 100;
     setTime({
       sec,
       min
@@ -42,6 +43,13 @@ const App = props => {
   // -------------- Event handler --------------
   const handleClick = e => {
     console.log("clicked");
+    timeInput.current.focus();
+  };
+
+  const handleKeyDownFocus = e => {
+    if (e.keyCode === 65 && e.ctrlKey) {
+      timeInput.current.focus();
+    }
   };
 
   const handleOnChange = e => {
@@ -100,15 +108,6 @@ const App = props => {
     setStop(true);
   };
 
-  useEffect(() => {
-    const circularProgress = document.querySelector(".circularProgress");
-    circularProgress.addEventListener("click", handleClick);
-
-    return () => {
-      circularProgress.removeEventListener("click", handleClick);
-    };
-  }, []);
-
   // Percentage change
   // Main timer logic
   useEffect(() => {
@@ -137,9 +136,10 @@ const App = props => {
       });
 
       curSec++;
-    }, 200);
+    }, 1000);
   }, [percentage]);
 
+  // update on time change
   useEffect(() => {
     if (Math.floor(percentage) >= 100) {
       audio.play();
@@ -151,6 +151,23 @@ const App = props => {
     }
   }, [time]);
 
+  // componentDidMount equivalent
+  useEffect(() => {
+    const circularProgress = document.querySelector(".circularProgress");
+    circularProgress.addEventListener("click", handleClick);
+
+    document.addEventListener("keydown", handleKeyDownFocus);
+
+    // timeInput.current.addEventListener("blur", () => {
+    //   console.log("input blur");
+    // });
+
+    return () => {
+      circularProgress.removeEventListener("click", handleClick);
+      document.removeEventListener("keydown", handleKeyDownFocus);
+    };
+  }, []);
+
   return (
     <div className="App">
       <div className="circularProgress">
@@ -160,19 +177,13 @@ const App = props => {
           // text={`${percentage}%`}
         />
       </div>
+      <input
+        ref={timeInput}
+        type="number"
+        onChange={handleOnChange}
+        className="timeInput"
+      />
       <div className="buttonGroup">
-        <div className="inputSpan">
-          <span>{time.min}</span>
-          <span>:</span>
-          <span>{time.sec}</span>
-        </div>
-        <input
-          ref={timeInput}
-          type="number"
-          onChange={handleOnChange}
-          className="timeInput"
-        />
-
         <Button.Group size="massive">
           <Button animated toggle active={loopTimer} onClick={handleLoopTimer}>
             <Button.Content hidden>Loop</Button.Content>
