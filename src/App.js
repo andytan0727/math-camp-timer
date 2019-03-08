@@ -57,9 +57,35 @@ const App = props => {
     setStop(true);
   };
 
+  const timerLogic = () => {
+    setPercentage((curSec / totalSec) * 100);
+
+    setTime(prevTime => {
+      if (prevTime.sec > 0) {
+        return {
+          min: prevTime.min,
+          sec: prevTime.sec - 1
+        };
+      } else if (prevTime.min === 0 && prevTime.sec === 0) {
+        return {
+          min: 0,
+          sec: 0
+        };
+      } else {
+        return {
+          min: prevTime.min - 1,
+          sec: 59
+        };
+      }
+    });
+
+    curSec++;
+
+    timer = setTimeout(timerLogic, 1025);
+  };
+
   // -------------- Event handler --------------
   const handleClick = e => {
-    console.log("clicked");
     timeInput.current.focus();
   };
 
@@ -88,20 +114,20 @@ const App = props => {
       InitializeTimer(value);
       setStart(prevStarted => !prevStarted);
       setStop(false);
-      setPercentage(curSec);
+      timerLogic();
     }
   };
 
   const handlePauseTimer = e => {
-    console.log("Paused!");
     setPause(prevPause => !prevPause);
     clearTimeout(timer);
   };
 
   const handleResumeTimer = e => {
-    console.log("Resume");
-    setPause(prevPause => !prevPause);
-    setPercentage((curSec / totalSec) * 100 + 0.01);
+    if (start && pause) {
+      setPause(prevPause => !prevPause);
+      timerLogic();
+    }
   };
 
   const handleStopTimer = e => {
@@ -112,37 +138,6 @@ const App = props => {
     resetTimer();
   };
 
-  // Percentage change
-  // Main timer logic
-  useEffect(() => {
-    // console.log(`min: ${time.min}, sec: ${time.sec}`);
-
-    timer = setTimeout(() => {
-      setPercentage((curSec / totalSec) * 100);
-
-      setTime(prevTime => {
-        if (prevTime.sec > 0) {
-          return {
-            min: prevTime.min,
-            sec: prevTime.sec - 1
-          };
-        } else if (prevTime.min === 0 && prevTime.sec === 0) {
-          return {
-            min: 0,
-            sec: 0
-          };
-        } else {
-          return {
-            min: prevTime.min - 1,
-            sec: 59
-          };
-        }
-      });
-
-      curSec++;
-    }, 1000);
-  }, [percentage]);
-
   // update on time change
   useEffect(() => {
     if (Math.floor(percentage) >= 100) {
@@ -150,7 +145,7 @@ const App = props => {
       clearTimeout(timer);
       if (loopTimer) {
         InitializeTimer(timeInput.current.value);
-        setPercentage(0);
+        timerLogic();
       } else {
         resetTimer();
       }
@@ -164,10 +159,6 @@ const App = props => {
 
     document.addEventListener("keydown", handleKeyDownFocus);
 
-    // timeInput.current.addEventListener("blur", () => {
-    //   console.log("input blur");
-    // });
-
     return () => {
       circularProgress.removeEventListener("click", handleClick);
       document.removeEventListener("keydown", handleKeyDownFocus);
@@ -177,12 +168,19 @@ const App = props => {
   return (
     <div className="App">
       <div className="mathCampText">
-        <ul>
-          <li>Maths</li>
-          <li>Camp</li>
-          <li>2019</li>
+        <ul className="mathCampYear">
+          <li>2</li>
+          <li>0</li>
+          <li>1</li>
+          <li>9</li>
+        </ul>
+        <ul className="mathCampTitle">
+          <li>数</li>
+          <li>学</li>
+          <li>营</li>
         </ul>
       </div>
+
       <div className="timer">
         <div className="circularProgress">
           <CircularProgressbar
@@ -206,49 +204,56 @@ const App = props => {
         <div className="buttonGroup">
           <Button.Group size="massive">
             <Button
-              animated
+              // animated
               toggle
               active={loopTimer}
               onClick={handleLoopTimer}
             >
-              <Button.Content hidden>Loop</Button.Content>
-              <Button.Content visible>
-                <Icon name="repeat" />
+              {/* <Button.Content hidden>Loop</Button.Content> */}
+              <Button.Content>
+                <Icon name="circle notched" />
               </Button.Content>
             </Button>
 
             {!start ? (
-              <Button animated="vertical" onClick={handleStartTimer}>
-                <Button.Content hidden>Start</Button.Content>
-                <Button.Content visible>
+              <Button
+                // animated="vertical"
+                color="teal"
+                onClick={handleStartTimer}
+              >
+                {/* <Button.Content hidden>Start</Button.Content> */}
+                <Button.Content>
                   <Icon name="play" />
                 </Button.Content>
               </Button>
             ) : (
               <Button
                 disabled={stop}
-                animated="fade"
+                // animated="fade"
                 color="red"
                 onClick={handleStopTimer}
               >
-                <Button.Content hidden>Stop</Button.Content>
-                <Button.Content visible>
+                {/* <Button.Content hidden>Stop</Button.Content> */}
+                <Button.Content>
                   <Icon name="stop" />
                 </Button.Content>
               </Button>
             )}
 
             {pause ? (
-              <Button animated="vertical" onClick={handleResumeTimer}>
-                <Button.Content hidden>Resume</Button.Content>
-                <Button.Content visible>
+              <Button
+                // animated="vertical"
+                color="blue"
+                onClick={handleResumeTimer}
+              >
+                {/* <Button.Content hidden>Resume</Button.Content> */}
+                <Button.Content>
                   <Icon name="play" />
                 </Button.Content>
               </Button>
             ) : (
-              <Button animated="vertical" onClick={handlePauseTimer}>
-                <Button.Content hidden>Pause</Button.Content>
-                <Button.Content visible>
+              <Button disabled={!start} onClick={handlePauseTimer}>
+                <Button.Content>
                   <Icon name="pause" />
                 </Button.Content>
               </Button>
