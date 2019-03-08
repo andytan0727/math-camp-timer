@@ -177,12 +177,19 @@ const App = props => {
   return (
     <div className="App">
       <div className="mathCampText">
-        <ul>
-          <li>Maths</li>
-          <li>Camp</li>
-          <li>2019</li>
+        <ul className="mathCampTitle">
+          <li>数</li>
+          <li>学</li>
+          <li>营</li>
+        </ul>
+        <ul className="mathCampYear">
+          <li>2</li>
+          <li>0</li>
+          <li>1</li>
+          <li>9</li>
         </ul>
       </div>
+
       <div className="timer">
         <div className="circularProgress">
           <CircularProgressbar
