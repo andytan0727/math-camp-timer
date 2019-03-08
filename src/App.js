@@ -59,7 +59,6 @@ const App = props => {
 
   // -------------- Event handler --------------
   const handleClick = e => {
-    console.log("clicked");
     timeInput.current.focus();
   };
 
@@ -93,13 +92,11 @@ const App = props => {
   };
 
   const handlePauseTimer = e => {
-    console.log("Paused!");
     setPause(prevPause => !prevPause);
     clearTimeout(timer);
   };
 
   const handleResumeTimer = e => {
-    console.log("Resume");
     setPause(prevPause => !prevPause);
     setPercentage((curSec / totalSec) * 100 + 0.01);
   };
@@ -115,8 +112,6 @@ const App = props => {
   // Percentage change
   // Main timer logic
   useEffect(() => {
-    // console.log(`min: ${time.min}, sec: ${time.sec}`);
-
     timer = setTimeout(() => {
       setPercentage((curSec / totalSec) * 100);
 
@@ -163,10 +158,6 @@ const App = props => {
     circularProgress.addEventListener("click", handleClick);
 
     document.addEventListener("keydown", handleKeyDownFocus);
-
-    // timeInput.current.addEventListener("blur", () => {
-    //   console.log("input blur");
-    // });
 
     return () => {
       circularProgress.removeEventListener("click", handleClick);
