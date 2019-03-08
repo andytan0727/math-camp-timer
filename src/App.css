@@ -48,9 +48,9 @@
   /* animation: glow 3s ease-in-out infinite; */
 }
 
-.mathCampTitle li {
+/* .mathCampTitle li {
   animation: glow 3s ease-in-out infinite;
-}
+} */
 
 .mathCampTitle li:nth-child(2) {
   animation-delay: 1s;
