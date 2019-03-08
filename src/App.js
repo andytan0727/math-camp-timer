@@ -57,6 +57,33 @@ const App = props => {
     setStop(true);
   };
 
+  const timerLogic = () => {
+    setPercentage((curSec / totalSec) * 100);
+
+    setTime(prevTime => {
+      if (prevTime.sec > 0) {
+        return {
+          min: prevTime.min,
+          sec: prevTime.sec - 1
+        };
+      } else if (prevTime.min === 0 && prevTime.sec === 0) {
+        return {
+          min: 0,
+          sec: 0
+        };
+      } else {
+        return {
+          min: prevTime.min - 1,
+          sec: 59
+        };
+      }
+    });
+
+    curSec++;
+
+    timer = setTimeout(timerLogic, 1025);
+  };
+
   // -------------- Event handler --------------
   const handleClick = e => {
     timeInput.current.focus();
@@ -87,7 +114,7 @@ const App = props => {
       InitializeTimer(value);
       setStart(prevStarted => !prevStarted);
       setStop(false);
-      setPercentage(curSec);
+      timerLogic();
     }
   };
 
@@ -99,7 +126,7 @@ const App = props => {
   const handleResumeTimer = e => {
     if (start && pause) {
       setPause(prevPause => !prevPause);
-      setPercentage((curSec / totalSec) * 100 + 0.01);
+      timerLogic();
     }
   };
 
@@ -111,35 +138,6 @@ const App = props => {
     resetTimer();
   };
 
-  // Percentage change
-  // Main timer logic
-  useEffect(() => {
-    timer = setTimeout(() => {
-      setPercentage((curSec / totalSec) * 100);
-
-      setTime(prevTime => {
-        if (prevTime.sec > 0) {
-          return {
-            min: prevTime.min,
-            sec: prevTime.sec - 1
-          };
-        } else if (prevTime.min === 0 && prevTime.sec === 0) {
-          return {
-            min: 0,
-            sec: 0
-          };
-        } else {
-          return {
-            min: prevTime.min - 1,
-            sec: 59
-          };
-        }
-      });
-
-      curSec++;
-    }, 1000);
-  }, [percentage]);
-
   // update on time change
   useEffect(() => {
     if (Math.floor(percentage) >= 100) {
@@ -147,7 +145,7 @@ const App = props => {
       clearTimeout(timer);
       if (loopTimer) {
         InitializeTimer(timeInput.current.value);
-        setPercentage(0);
+        timerLogic();
       } else {
         resetTimer();
       }
