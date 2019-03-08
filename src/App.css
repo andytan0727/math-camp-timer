@@ -32,12 +32,12 @@
 }
 
 .mathCampTitle {
-  padding-right: 90px;
   font-family: "Muyao-Softbrush Regular", "沐瑶软笔手写体", "ZCOOL KuaiLe",
     "ZCOOL QingKe HuangYou", cursive;
 }
 
 .mathCampYear {
+  padding-right: 90px;
   font-family: "Baloo Thambi", cursive;
 }
 

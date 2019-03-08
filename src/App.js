@@ -97,8 +97,10 @@ const App = props => {
   };
 
   const handleResumeTimer = e => {
-    setPause(prevPause => !prevPause);
-    setPercentage((curSec / totalSec) * 100 + 0.01);
+    if (start && pause) {
+      setPause(prevPause => !prevPause);
+      setPercentage((curSec / totalSec) * 100 + 0.01);
+    }
   };
 
   const handleStopTimer = e => {
@@ -168,16 +170,16 @@ const App = props => {
   return (
     <div className="App">
       <div className="mathCampText">
-        <ul className="mathCampTitle">
-          <li>数</li>
-          <li>学</li>
-          <li>营</li>
-        </ul>
         <ul className="mathCampYear">
           <li>2</li>
           <li>0</li>
           <li>1</li>
           <li>9</li>
+        </ul>
+        <ul className="mathCampTitle">
+          <li>数</li>
+          <li>学</li>
+          <li>营</li>
         </ul>
       </div>
 
@@ -204,49 +206,56 @@ const App = props => {
         <div className="buttonGroup">
           <Button.Group size="massive">
             <Button
-              animated
+              // animated
               toggle
               active={loopTimer}
               onClick={handleLoopTimer}
             >
-              <Button.Content hidden>Loop</Button.Content>
-              <Button.Content visible>
-                <Icon name="repeat" />
+              {/* <Button.Content hidden>Loop</Button.Content> */}
+              <Button.Content>
+                <Icon name="circle notched" />
               </Button.Content>
             </Button>
 
             {!start ? (
-              <Button animated="vertical" onClick={handleStartTimer}>
-                <Button.Content hidden>Start</Button.Content>
-                <Button.Content visible>
+              <Button
+                // animated="vertical"
+                color="teal"
+                onClick={handleStartTimer}
+              >
+                {/* <Button.Content hidden>Start</Button.Content> */}
+                <Button.Content>
                   <Icon name="play" />
                 </Button.Content>
               </Button>
             ) : (
               <Button
                 disabled={stop}
-                animated="fade"
+                // animated="fade"
                 color="red"
                 onClick={handleStopTimer}
               >
-                <Button.Content hidden>Stop</Button.Content>
-                <Button.Content visible>
+                {/* <Button.Content hidden>Stop</Button.Content> */}
+                <Button.Content>
                   <Icon name="stop" />
                 </Button.Content>
               </Button>
             )}
 
             {pause ? (
-              <Button animated="vertical" onClick={handleResumeTimer}>
-                <Button.Content hidden>Resume</Button.Content>
-                <Button.Content visible>
+              <Button
+                // animated="vertical"
+                color="blue"
+                onClick={handleResumeTimer}
+              >
+                {/* <Button.Content hidden>Resume</Button.Content> */}
+                <Button.Content>
                   <Icon name="play" />
                 </Button.Content>
               </Button>
             ) : (
-              <Button animated="vertical" onClick={handlePauseTimer}>
-                <Button.Content hidden>Pause</Button.Content>
-                <Button.Content visible>
+              <Button disabled={!start} onClick={handlePauseTimer}>
+                <Button.Content>
                   <Icon name="pause" />
                 </Button.Content>
               </Button>
