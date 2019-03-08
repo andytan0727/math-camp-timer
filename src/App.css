@@ -1,18 +1,29 @@
-@import url("https://fonts.googleapis.com/css?family=Fira+Sans");
 @import url("https://fonts.googleapis.com/css?family=Baloo+Thambi");
+@import url("https://fonts.googleapis.com/css?family=ZCOOL+QingKe+HuangYou");
+@import url("https://fonts.googleapis.com/css?family=ZCOOL+KuaiLe");
+
+@font-face {
+  font-family: "Muyao-Softbrush Regular";
+  font-style: normal;
+  src: local("Muyao-Softbrush Regular");
+}
 
 .App {
   display: flex;
-  flex-direction: row;
 }
 
 .mathCampText {
+  display: flex;
+  flex: 2;
+  align-items: center;
+  justify-content: center;
   width: 500px;
 
   /* vertical align */
   position: absolute;
   top: 50%;
-  transform: translate(10%, -50%);
+  left: 5%;
+  transform: translateY(-50%);
 }
 
 .mathCampText ul {
@@ -20,30 +31,40 @@
   text-align: center;
 }
 
-.mathCampText ul li {
-  /* font-family: 'Fira Sans', sans-serif; */
+.mathCampTitle {
+  padding-right: 90px;
+  font-family: "Muyao-Softbrush Regular", "沐瑶软笔手写体", "ZCOOL KuaiLe",
+    "ZCOOL QingKe HuangYou", cursive;
+}
+
+.mathCampYear {
   font-family: "Baloo Thambi", cursive;
-  /* font-weight: bold; */
-  font-size: 75px;
-  line-height: 2em;
-  /* text-transform: uppercase; */
+}
+
+.mathCampText ul li {
+  /* font-family: "Baloo Thambi", cursive; */
+  font-size: 100px;
+  line-height: 1.2em;
+  /* animation: glow 3s ease-in-out infinite; */
+}
+
+.mathCampTitle li {
   animation: glow 3s ease-in-out infinite;
 }
 
-.mathCampText ul li:nth-child(2) {
+.mathCampTitle li:nth-child(2) {
   animation-delay: 1s;
 }
 
-.mathCampText ul li:nth-child(3) {
+.mathCampTitle li:nth-child(3) {
   animation-delay: 2s;
 }
 
 .timer {
   display: flex;
+  flex: 1;
   justify-content: center;
   align-content: center;
-  /* min-width: 100%; */
-  /* height: inherit; */
   position: absolute;
   /* left: 20%; */
   right: 20%;
