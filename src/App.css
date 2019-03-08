@@ -43,7 +43,7 @@
 
 .mathCampText ul li {
   /* font-family: "Baloo Thambi", cursive; */
-  font-size: 100px;
+  font-size: 115px;
   line-height: 1.2em;
   /* animation: glow 3s ease-in-out infinite; */
 }
@@ -71,7 +71,8 @@
 }
 
 .circularProgress {
-  width: 390px;
+  /* width: 390px; */
+  width: 32.5vw;
   position: absolute;
   top: 7%;
 }
