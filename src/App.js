@@ -8,6 +8,8 @@ import "./App.css";
 
 let timer;
 let curSec;
+let expected;
+let interval = 1000;
 const audio = new Audio(sound);
 
 const App = props => {
@@ -58,6 +60,8 @@ const App = props => {
   };
 
   const timerLogic = () => {
+    let dt = performance.now() - expected;
+
     setPercentage((curSec / totalSec) * 100);
 
     setTime(prevTime => {
@@ -81,7 +85,8 @@ const App = props => {
 
     curSec++;
 
-    timer = setTimeout(timerLogic, 1025);
+    expected += interval;
+    timer = setTimeout(timerLogic, Math.max(0, interval - dt));
   };
 
   // -------------- Event handler --------------
@@ -114,7 +119,9 @@ const App = props => {
       InitializeTimer(value);
       setStart(prevStarted => !prevStarted);
       setStop(false);
-      timerLogic();
+
+      expected = performance.now() + interval;
+      timer = setTimeout(timerLogic, interval);
     }
   };
 
